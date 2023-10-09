@@ -3,11 +3,22 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView, ListView, DetailView
 
 from mailing.models import Mailing, Client, MailingLogs
+from mailing.services import get_mailing_cache
 
 
 def contacts(request):
     """Страница контактов"""
     return render(request, 'mailing/contacts.html')
+
+
+class HomeView(TemplateView):
+    """Домашняя страница"""
+    template_name = 'mailing/home.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = get_mailing_cache()
+        return context_data
 
 
 class ClientCreateView(CreateView):
