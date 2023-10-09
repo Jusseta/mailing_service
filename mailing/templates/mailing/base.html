@@ -1,0 +1,68 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<div class="container py-3">
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>SkyBlog</title>
+      <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
+  </head>
+  <body>
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+      <h5 class="my-0 mr-md-auto font-weight-normal">SkyBlog</h5>
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        <a  class="me-3 py-2 link-body-emphasis text-decoration-none">Главная</a>
+        <a href='{% url "mailing:clients" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Клиенты</a>
+        {% if user.is_authenticated %}
+          <a  class="me-3 py-2 link-body-emphasis text-decoration-none">Выход</a>
+        {% else %}
+          <a  class="me-3 py-2 link-body-emphasis text-decoration-none">Вход</a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none">Регистрация</a>
+        {% endif %}
+      </nav>
+  </div>
+  </body>
+  {% block title %}
+  {% endblock %}
+
+   <main>
+     {% block content %}
+     {% endblock %}
+   </main>
+
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+    <div class="row">
+      <div class="col-3 col-md">
+        <small class="d-block mb-3 text-body-secondary">SkyBlog &copy; 2023 - {% now 'Y' %}</small>
+      </div>
+      <div class="col-3 col-md">
+        <h5>Категории</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a href='{% url "mailing:mails" %}' class="link-secondary text-decoration-none">Рассылки</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Телеграм боты</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Полезные утилиты</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Веб-приложения</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Микросервисы</a></li>
+        </ul>
+      </div>
+      <div class="col-3 col-md">
+        <h5>Дополнительно</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Мы пишем</a></li>
+        </ul>
+      </div>
+      <div class="col-3 col-md">
+        <h5>О нас</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a href='{% url "mailing:contacts" %}' class="link-secondary text-decoration-none">Контакты</a></li>
+        </ul>
+      </div>
+    </div>
+    </footer>
+</div>
+
+<script src="{% static 'bootstrap.bundle.min.js' %}" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+</body>
+</html>
