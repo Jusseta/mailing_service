@@ -9,8 +9,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="pricing-header p-1 pb-md-5 mx-auto text-center">
-    <div class="card col-6">
+<div class="row">
+<div class="col-4"></div>
+<div class="col-4">
+    <form method="post">
+      <div class="card">
         <div class="card-header">Введите данные</div>
         <div class="card-body">
             <form method="post">
@@ -19,6 +22,8 @@
                  <button type="submit" class="btn btn-primary">Сохранить</button>
             </form>
         </div>
-    </div>
+      </div>
+    </form>
+</div>
 </div>
 {% endblock %}

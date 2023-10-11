@@ -1,9 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView, ListView, DetailView
 
+from mailing.forms import ClientForm, MailingForm
 from mailing.models import Mailing, Client, MailingLogs
 from mailing.services import get_mailing_cache
+from users.models import User
 
 
 def contacts(request):
@@ -11,7 +14,7 @@ def contacts(request):
     return render(request, 'mailing/contacts.html')
 
 
-class HomeView(TemplateView):
+class HomeView(LoginRequiredMixin, TemplateView):
     """Домашняя страница"""
     template_name = 'mailing/home.html'
 
@@ -24,15 +27,29 @@ class HomeView(TemplateView):
 class ClientCreateView(CreateView):
     """Создание профиля клиента"""
     model = Client
-    fields = ('full_name', 'email', 'message',)
+    form_class = ClientForm
     extra_context = {'title': 'Добавление клиента'}
     success_url = reverse_lazy('mailing:clients')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            client = form.save()
+            client.owner = self.request.user
+            client.save()
+
+        return super().form_valid(form)
 
 
 class ClientListView(ListView):
     """Страница со списком клиентов"""
     model = Client
     extra_context = {'title': 'Клиенты'}
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(owner=self.request.user.id)
+
+        return queryset
 
 
 class ClientUpdateView(UpdateView):
@@ -53,7 +70,7 @@ class ClientDeleteView(DeleteView):
 class MailingCreateView(CreateView):
     """Создание рассылки"""
     model = Mailing
-    fields = ('message',  'mail_to', 'frequency', 'status',)
+    form_class = MailingForm
     extra_context = {'title': 'Создание рассылки'}
     success_url = reverse_lazy('mailing:mails')
 

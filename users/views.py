@@ -7,12 +7,13 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import CreateView
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, UserLoginForm
 from users.models import User
 
 
 class LoginView(BaseLoginView):
     """Вход в учетную запись"""
+    form_class = UserLoginForm
     template_name = 'users/login.html'
 
 
@@ -47,5 +48,4 @@ def verify(request, key):
     user_item = get_object_or_404(User, token=key)
     user_item.is_active = True
     user_item.save(update_fields=['is_active'])
-
-    return messages.add_message(request, messages.INFO, f'Учетная запись {user_item.email} активирована')
+    return render(request, 'users/verify_message.html')
