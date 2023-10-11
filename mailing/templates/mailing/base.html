@@ -13,6 +13,7 @@
       <h5 class="my-0 mr-md-auto font-weight-normal">SkyBlog</h5>
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
         <a href='{% url "mailing:home" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Главная</a>
+        <a href='{% url "blog:blogs" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Блог</a>
         <a href='{% url "mailing:clients" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Клиенты</a>
         {% if user.is_authenticated %}
           <a href='{% url "users:logout" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Выход</a>

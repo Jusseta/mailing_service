@@ -10,13 +10,14 @@ class StyleFormMixin:
 
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):
-
+    """Форма для регистрации пользователя"""
     class Meta:
         model = User
         fields = ('email', 'password1', 'password2')
 
 
 class UserLoginForm(StyleFormMixin, AuthenticationForm):
+    """Форма для входа в учетную запись"""
 
     class Meta:
         model = User

@@ -14,7 +14,7 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Mailing)
 class MailingAdmin(admin.ModelAdmin):
-    list_display = ('frequency', 'status',)
+    list_display = ('message', 'frequency', 'status',)
     list_filter = ('frequency',)
     search_fields = ('status',)
 

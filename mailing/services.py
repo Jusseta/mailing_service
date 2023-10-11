@@ -68,8 +68,9 @@ def send_mails(clients, message):
 
 
 def get_mailing_cache():
+    """Кэширование домашней страницы"""
     if settings.CACHE_ENABLED:
-        key = 'category_list'
+        key = 'home'
         category_list = cache.get(key)
         if category_list is None:
             category_list = Mailing.objects.all()

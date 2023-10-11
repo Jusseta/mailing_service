@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
@@ -29,6 +28,7 @@ class RegisterView(CreateView):
     template_name = 'users/register.html'
 
     def form_valid(self, form):
+        """Отпавка сообщения с токеном на почту для активации учетной записи"""
         if form.is_valid():
             self.object = form.save()
             self.object.is_active = False

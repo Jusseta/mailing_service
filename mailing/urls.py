@@ -14,7 +14,7 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
 
     path('client_create/', ClientCreateView.as_view(), name='client_create'),
-    path('clients/', ClientListView.as_view(), name='clients'),
+    path('clients/', cache_page(60)(ClientListView.as_view()), name='clients'),
     path('client_update/<int:pk>/', ClientUpdateView.as_view(), name='client_update'),
     path('client_delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete'),
 
@@ -23,6 +23,11 @@ urlpatterns = [
     path('mail_update/<int:pk>/', MailingUpdateView.as_view(), name='mail_update'),
     path('mail_detail/<int:pk>/', MailingDetailView.as_view(), name='mail_detail'),
     path('mail_delete/<int:pk>/', MailingDeleteView.as_view(), name='mail_delete'),
+
+    path('message_create/', MessageCreateView.as_view(), name='message_create'),
+    path('messages/', cache_page(60)(MessagesListView.as_view()), name='messages'),
+    path('message_update/<int:pk>/', MessageUpdateView.as_view(), name='message_update'),
+    path('message_delete/<int:pk>/', MessageDeleteView.as_view(), name='message_delete'),
 
     path('logs/', MailingLogsListView.as_view(), name='logs'),
 
