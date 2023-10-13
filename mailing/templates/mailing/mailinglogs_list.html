@@ -11,25 +11,23 @@
 
 {% block content %}
 <div class="col-12 mb-5">
-        <a href="{%  url 'mailing:clients' %}" class="btn btn-outline-success">Клиенты</a>
-        <a href="{%  url 'mailing:mails' %}" class="btn btn-outline-success">Рассылки</a>
-      </div>
-      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
-        {% for object in object_list %}
-        <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
+    <a href="{%  url 'mailing:clients' %}" class="btn btn-outline-success">Клиенты</a>
+    <a href="{%  url 'mailing:mails' %}" class="btn btn-outline-success">Рассылки</a>
+</div>
+<div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
+    {% for object in object_list %}
+    <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm">
             <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">{{ object.status }}</h4>
+                <h4 class="my-0 fw-normal">{{ object.server_response }}</h4>
             </div>
             <div class="card-body">
               <p>Кому: {{ object.client.full_name }}</p>
               <p>Тема: {{ object.mailing.message.theme }}</p>
-              <p>Попытка была в {{ object.last_try }}</p>
+              <p>Последняя попытка: {{ object.last_try }}</p>
             </div>
-
-            </div>
-          </div>
         </div>
-        {% endfor %}
-      </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

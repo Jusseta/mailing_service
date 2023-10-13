@@ -11,6 +11,7 @@
 {% block content %}
 <div class="col-12 mb-5">
         <a href="{%  url 'mailing:mail_create' %}" class="btn btn-outline-success">Добавить рассылку</a>
+        <a href="{%  url 'mailing:messages' %}" class="btn btn-outline-success">Сообщения</a>
         <a href="{%  url 'mailing:logs' %}" class="btn btn-outline-success">Просмотр логов</a>
       </div>
       <div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
@@ -22,13 +23,25 @@
             </div>
             <div class="card-body">
               <p>{{ object.status }}</p>
+              {% if user.is_staff or user == object.user %}
+                   <div class="col">
+                       {% if object.is_active %}
+                          <a href="{% url 'mailing:switch_active' object.pk %}" class="btn btn-success btn-sm">Включена</a>
+                       {% else %}
+                          <a href="{% url 'mailing:switch_active' object.pk %}" class="btn btn-danger btn-sm">Отключена</a>
+                       {% endif %}
+                  </div><br>
+                {% endif %}
+
                 <div class="btn-group">
                 <a href='{% url "mailing:mail_detail" object.pk %}' type="button"
                    class="btn btn-outline-primary">Подробнее</a>
+                {% if user == object.user or user.is_superuser %}
                 <a href='{% url "mailing:mail_update" object.pk %}' type="button"
                    class="btn btn-outline-warning">Изменить</a>
                 <a href='{% url "mailing:mail_delete" object.pk %}' type="button"
                    class="btn btn-outline-danger">Удалить</a>
+                {% endif %}
                 </div>
             </div>
           </div>

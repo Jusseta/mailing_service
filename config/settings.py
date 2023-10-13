@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 
     'mailing',
     'django_apscheduler',
+    'users',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -159,3 +161,8 @@ if CACHE_ENABLED:
 
 APSCHEDULER_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+AUTH_USER_MODEL = 'users.User'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/users/login/'

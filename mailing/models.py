@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -10,6 +11,7 @@ class Client(models.Model):
     full_name = models.CharField(max_length=150, verbose_name='ФИО')
     email = models.EmailField(max_length=150, verbose_name='Почта')
     message = models.TextField(verbose_name='Комментарий', **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return f'{self.full_name} ({self.email})'
@@ -21,8 +23,9 @@ class Client(models.Model):
 
 class Message(models.Model):
     """Сообщение для рассылки"""
-    theme = models.CharField(max_length=100, verbose_name='Тема письма')
-    body = models.TextField(verbose_name='Тело письма')
+    theme = models.CharField(max_length=100, verbose_name='Тема сообщения')
+    body = models.TextField(verbose_name='Текст')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return self.theme
@@ -33,7 +36,7 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    """Модель сообщения для рассылки"""
+    """Модель рассылки"""
     frequency_list = [
         ('day', 'раз в день'),
         ('week', 'раз в неделю'),
@@ -51,9 +54,11 @@ class Mailing(models.Model):
 
     frequency = models.CharField(choices=frequency_list, default='day', verbose_name='Периодичность')
     status = models.CharField(choices=status_list, default='create', verbose_name='Статус')
+    is_active = models.BooleanField(default=True, verbose_name='Активна')
 
     mail_to = models.ManyToManyField(Client, verbose_name='Получатель')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение', **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return self.status

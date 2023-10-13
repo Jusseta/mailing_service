@@ -4,6 +4,8 @@ from django.core.cache import cache
 from django.core.mail import send_mail
 from django.utils import timezone
 from mailing.models import Mailing, MailingLogs
+from django.conf import settings
+from django.core.cache import cache
 
 
 def form_mail():
@@ -39,12 +41,41 @@ def form_mail():
 def send_mails(clients, message):
     """Отправка сообщений на почту"""
     for client in clients:
-        send_mail(
-            subject=message.message.theme,
-            message=message.message.body,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[client.email],
-            fail_silently=False,
-        )
-        log = MailingLogs(status='success', client=client, mailing=message)
-        log.save()
+        try:
+            send_mail(
+                subject=message.message.theme,
+                message=message.message.body,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[client.email],
+                fail_silently=False,
+            )
+            log = MailingLogs(
+                server_response="Успешно",
+                status='success',
+                client=client,
+                mailing=message
+            )
+            log.save()
+
+        except Exception:
+            log = MailingLogs(
+                server_response='Неудачно',
+                status='failure',
+                client=client,
+                mailing=message
+            )
+            log.save()
+
+
+def get_mailing_cache():
+    """Кэширование домашней страницы"""
+    if settings.CACHE_ENABLED:
+        key = 'home'
+        category_list = cache.get(key)
+        if category_list is None:
+            category_list = Mailing.objects.all()
+            cache.set(key, category_list)
+    else:
+        category_list = Mailing.objects.all()
+    return category_list
+

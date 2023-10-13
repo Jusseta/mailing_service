@@ -9,27 +9,27 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-12 mb-5">
-        <a href="{%  url 'mailing:client_create' %}" class="btn btn-outline-success">Добавить клиента</a>
-      </div>
-      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
-        {% for object in object_list %}
-        <div class="col">
+    <div class="col-12 mb-5">
+      <a href="{% url 'mailing:client_create' %}" class="btn btn-outline-success">Добавить клиента</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
+      {% for object in object_list %}
+        <div class="col-4">
           <div class="card mb-4 rounded-3 shadow-sm">
             <div class="card-header py-3">
               <h4 class="my-0 fw-normal">{{ object.full_name }}</h4>
             </div>
-            <div class="card-body">
-              <p>{{ object.email }}</p>
+              <div class="card-body">
+                <p>{{ object.email }}</p>
                 <div class="btn-group">
-                <a href='{% url "mailing:client_update" object.pk %}' type="button"
-                   class="btn btn-outline-warning">Изменить</a>
-                <a href='{% url "mailing:client_delete" object.pk %}' type="button"
-                   class="btn btn-outline-danger">Удалить</a>
-            </div>
+                  <a href='{% url "mailing:client_update" object.pk %}' type="button"
+                    class="btn btn-outline-warning">Изменить</a>
+                  <a href='{% url "mailing:client_delete" object.pk %}' type="button"
+                    class="btn btn-outline-danger">Удалить</a>
+              </div>
             </div>
           </div>
         </div>
-        {% endfor %}
-      </div>
+    {% endfor %}
+    </div>
 {% endblock %}
