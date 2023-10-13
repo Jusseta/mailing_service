@@ -1,0 +1,31 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+
+{% block content %}
+<h2>{{ object.title }}</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <img src="{{ object.image|mymedia }}" class="leftpic" alt="Card image cap" width="450" height="350">
+        </div>
+        <div class="col">
+            <div class="description mid-checkout-content">
+            <br> <p itemprop="description">{{ object.content }}</p><br>
+                 <p>Просмотры: {{ object.views }}</p>
+
+            <br> <p><small class="text-body-secondary fw-light">Опублиовано {{ object.published_at }}</small></p>
+        </div>
+        {% if user.is_superuser %}
+        <div class="col">
+            <div class="btn-group">
+                <a href='{% url "blog:blog_update" object.pk %}' type="button"
+                   class="btn btn-outline-warning">Изменить</a>
+                <a href='{% url "blog:blog_delete" object.pk %}' type="button"
+                   class="btn btn-outline-danger">Удалить</a>
+            </div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
