@@ -14,12 +14,12 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
     """Форма для создания рассылки"""
     class Meta:
         model = Mailing
-        exclude = ('owner',)
+        exclude = ('owner', 'is_active',)
 
     def __init__(self, *args, **kwargs):
         uid = kwargs.pop('uid')
         super().__init__(*args, **kwargs)
-        self.fields['message'].queryset = Message.objects.filter(owner=uid)
+        self.fields['message'].queryset = Message.objects.all().filter(owner=uid)
         self.fields['mail_to'].queryset = Client.objects.filter(owner=uid)
 
 

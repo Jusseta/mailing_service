@@ -14,11 +14,14 @@
         <div class="col">
             <div class="description mid-checkout-content">
                 <p>Тема: {{ object.message.theme }}</p>
-                <p>Для: {{ object.mail_to.full_name }}</p>
+                <p>Для: {% for client in object.mail_to.all %}
+                    {{ client.email }} <br>
+                    {% endfor %}</p>
                 <p>Текст: {{ object.message.body }}</p>
                 <p>Периодичность: {{ object.frequency }}</p>
                 <p>Статус: {{ object.status }}</p>
         </div>
+        {% if user == object.user or user.is_superuser %}
         <div class="col">
             <div class="btn-group">
                 <a href='{% url "mailing:mail_update" object.pk %}' type="button"
@@ -27,6 +30,7 @@
                    class="btn btn-outline-danger">Удалить</a>
             </div>
         </div>
+        {% endif %}
       </div>
     </div>
 </div>

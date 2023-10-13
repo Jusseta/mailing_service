@@ -1,9 +1,11 @@
+import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView, ListView, DetailView
 
+from blog.models import Blog
 from mailing.forms import ClientForm, MailingForm, MessageForm
 from mailing.models import Mailing, Client, MailingLogs, Message
 from mailing.services import get_mailing_cache
@@ -20,7 +22,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        all_blogs = list(Blog.objects.all())
         context_data['object_list'] = get_mailing_cache()
+        context_data['random_blogs'] = random.sample(all_blogs, 3)
         return context_data
 
 
@@ -65,9 +69,9 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('mailing:clients')
 
     def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
+        """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
+        if self.object.user != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -79,9 +83,9 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('mailing:clients')
 
     def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
+        """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
+        if self.object.user != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -128,24 +132,24 @@ class MailingListView(LoginRequiredMixin, ListView):
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """Изменение рассылки"""
     model = Mailing
-    fields = ('message', 'mail_to', 'frequency', 'status',)
+    form_class = MailingForm
     extra_context = {'title': 'Изменение рассылки'}
 
     def get_success_url(self):
         return reverse_lazy('mailing:mail_detail', args=(self.object.id,))
+
+    def get_object(self, queryset=None):
+        """Проверка на владельца, модератора или суперюзера"""
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404('Ограничение прав доступа')
+        return self.object
 
     def get_form_kwargs(self):
         """Вывод списка рассылок созданного только этим пользователем"""
         kwargs = super().get_form_kwargs()
         kwargs['uid'] = self.request.user
         return kwargs
-
-    def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
-        self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
-            raise Http404('Ограничение прав доступа')
-        return self.object
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -161,9 +165,9 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('mailing:mails')
 
     def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
+        """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -208,9 +212,9 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     extra_context = {'title': 'Удалить сообщение'}
 
     def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
+        """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -223,9 +227,9 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     extra_context = {'title': 'Изменить сообщение'}
 
     def get_object(self, queryset=None):
-        """Проверка на модератора и суперюзера"""
+        """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_stuff:
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -234,3 +238,15 @@ class MailingLogsListView(LoginRequiredMixin, ListView):
     """Страница со списком рассылок"""
     model = MailingLogs
     extra_context = {'title': 'Логи рассылки'}
+
+
+def switch_active(request, pk):
+    """Включает и отключает рассылки"""
+    mailing = get_object_or_404(Mailing, pk=pk)
+    if mailing.is_active:
+        mailing.is_active = False
+    else:
+        mailing.is_active = True
+    mailing.save()
+
+    return redirect(reverse('mailing:mails'))

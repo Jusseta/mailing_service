@@ -54,6 +54,7 @@ class Mailing(models.Model):
 
     frequency = models.CharField(choices=frequency_list, default='day', verbose_name='Периодичность')
     status = models.CharField(choices=status_list, default='create', verbose_name='Статус')
+    is_active = models.BooleanField(default=True, verbose_name='Активна')
 
     mail_to = models.ManyToManyField(Client, verbose_name='Получатель')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение', **NULLABLE)
