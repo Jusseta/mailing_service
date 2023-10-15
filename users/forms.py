@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from users.models import User
 
 
@@ -22,3 +23,15 @@ class UserLoginForm(StyleFormMixin, AuthenticationForm):
     class Meta:
         model = User
         fields = ('email', 'password',)
+
+
+class UserForm(StyleFormMixin, UserChangeForm):
+    """Форма для редактирования профиля"""
+    class Meta:
+        model = User
+        fields = ('email', 'password', 'avatar', 'phone', 'country',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].widget = forms.EmailInput(attrs={'readonly': 'readonly'})
+        self.fields['password'].widget = forms.HiddenInput()

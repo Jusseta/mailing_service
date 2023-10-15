@@ -1,0 +1,35 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}
+  <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <div class="pricing-header p-1 pb-md-5 mx-auto text-center">
+      <h1 class="display-4 fw-normal text-body-emphasis">{{ title }}</h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center d-flex align-items-stretch">
+        {% for object in object_list %}
+        <div class="col">
+          <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card-header py-3">
+              <h4 class="my-0 fw-normal">{{ object.email }}</h4>
+            </div>
+            <div class="card-body">
+              <p>{{ object.country }}</p>
+              {% if user.is_staff or user.is_superuser %}
+                   <div class="col">
+                       {% if object.is_active %}
+                          <a href="{% url 'users:switch_active' object.pk %}" class="btn btn-success btn-sm">Активен</a>
+                       {% else %}
+                          <a href="{% url 'users:switch_active' object.pk %}" class="btn btn-danger btn-sm">Не активен</a>
+                       {% endif %}
+                  </div><br>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+{% endblock %}

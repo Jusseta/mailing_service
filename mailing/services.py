@@ -25,14 +25,12 @@ def form_mail():
 
                 # Проверка расписания рассылки с учетом последнего лога рассылки
                 if last_log is None or last_log.status == 'failure' or (
-
                         mail.frequency == 'day' and today.date() - last_log.last_try.date() >= timedelta(days=1) or (
                         mail.frequency == 'week' and today.date() - last_log.last_try.date() >= timedelta(days=7) or (
                         mail.frequency == 'month' and today.date() - last_log.last_try.date() >= timedelta(days=30)))):
 
                     clients = mail.mail_to.all()
                     send_mails(clients, mail)
-
         else:
             mail.status = 'finish'
             mail.save()
