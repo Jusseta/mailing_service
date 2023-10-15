@@ -22,7 +22,13 @@
               <h4 class="my-0 fw-normal">{{ object.message }}</h4>
             </div>
             <div class="card-body">
-              <p>{{ object.status }}</p>
+              {% if object.status == 'finish' %}
+                <p>Рассылка завершена</p>
+              {% elif object.status == 'create' %}
+                <p>Рассылка создана</p>
+              {% else %}
+                <p>Рассылка запущена</p>
+              {% endif %}
               {% if user.is_staff or user == object.user %}
                    <div class="col">
                        {% if object.is_active %}

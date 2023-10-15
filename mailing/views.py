@@ -24,7 +24,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context_data = super().get_context_data(**kwargs)
         all_blogs = list(Blog.objects.all())
         context_data['object_list'] = get_mailing_cache()
-        context_data['random_blogs'] = random.sample(all_blogs, 3)
+        if len(all_blogs) >= 3:
+            context_data['random_blogs'] = random.sample(all_blogs, 3)
+        else:
+            context_data['random_blogs'] = all_blogs
+
         return context_data
 
 
@@ -71,7 +75,7 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_staff:
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 
@@ -85,7 +89,7 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         """Проверка на владельца, модератора или суперюзера"""
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_staff:
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
             raise Http404('Ограничение прав доступа')
         return self.object
 

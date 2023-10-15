@@ -18,8 +18,20 @@
                     {{ client.email }} <br>
                     {% endfor %}</p>
                 <p>Текст: {{ object.message.body }}</p>
-                <p>Периодичность: {{ object.frequency }}</p>
-                <p>Статус: {{ object.status }}</p>
+                {% if object.frequency == 'day' %}
+                  <p>Периодичность: ежедневная</p>
+                {% elif object.frequency == 'week' %}
+                  <p>Периодичность: еженедельная</p>
+                {% else %}
+                  <p>Периодичность: ежемесячная</p>
+                {% endif %}
+                {% if object.status == 'finish' %}
+                  <p>Статус: Рассылка завершена</p>
+                {% elif object.status == 'create' %}
+                  <p>Статус: Рассылка создана</p>
+                {% else %}
+                  <p>Статус: Рассылка запущена</p>
+                {% endif %}
         </div>
         {% if user == object.user or user.is_superuser %}
         <div class="col">

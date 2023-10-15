@@ -2,11 +2,11 @@ from django.conf import settings
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
-from django.views.generic import CreateView
-from users.forms import UserRegisterForm, UserLoginForm
+from django.views.generic import CreateView, UpdateView, ListView
+from users.forms import UserRegisterForm, UserLoginForm, UserForm
 from users.models import User
 
 
@@ -43,9 +43,47 @@ class RegisterView(CreateView):
             return super().form_valid(form)
 
 
+class ProfileUpdateView(UpdateView):
+    model = User
+    success_url = reverse_lazy('users:profile')
+    form_class = UserForm
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
 def verify(request, key):
     """Подтверждение учетной записи пользователя"""
     user_item = get_object_or_404(User, token=key)
     user_item.is_active = True
     user_item.save(update_fields=['is_active'])
     return render(request, 'users/verify_message.html')
+
+
+class ProfileListView(ListView):
+    """Список пользователей сервиса"""
+    model = User
+    success_url = reverse_lazy('users:profiles')
+    extra_context = {'title': 'Пользователи'}
+
+    def get_queryset(self):
+        """Проверка на модератора и суперюзера"""
+        queryset = super().get_queryset()
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            queryset.all()
+        else:
+            queryset = queryset.filter(owner=self.request.user.id)
+
+        return queryset
+
+
+def switch_active(request, pk):
+    """Активирует и блокирует пользователей"""
+    mailing = get_object_or_404(User, pk=pk)
+    if mailing.is_active:
+        mailing.is_active = False
+    else:
+        mailing.is_active = True
+    mailing.save()
+
+    return redirect(reverse('users:profiles'))

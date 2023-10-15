@@ -15,7 +15,11 @@
         <a href='{% url "mailing:home" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Главная</a>
         <a href='{% url "blog:blogs" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Блог</a>
         <a href='{% url "mailing:clients" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Клиенты</a>
+        {% if user.is_staff or user.is_superuser %}
+        <a href='{% url "users:profiles" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Пользователи</a>
+        {% endif %}
         {% if user.is_authenticated %}
+          <a href='{% url "users:profile" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Профиль</a>
           <a href='{% url "users:logout" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Выход</a>
         {% else %}
           <a href='{% url "users:login" %}' class="me-3 py-2 link-body-emphasis text-decoration-none">Вход</a>

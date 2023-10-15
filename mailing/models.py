@@ -52,8 +52,8 @@ class Mailing(models.Model):
     start_time = models.DateTimeField(default=timezone.now, verbose_name='Дата начала рассылки')
     stop_time = models.DateTimeField(verbose_name='Дата окончания рассылки', **NULLABLE)
 
-    frequency = models.CharField(choices=frequency_list, default='day', verbose_name='Периодичность')
-    status = models.CharField(choices=status_list, default='create', verbose_name='Статус')
+    frequency = models.CharField(max_length=20, choices=frequency_list, default='day', verbose_name='Периодичность')
+    status = models.CharField(max_length=20, choices=status_list, default='create', verbose_name='Статус')
     is_active = models.BooleanField(default=True, verbose_name='Активна')
 
     mail_to = models.ManyToManyField(Client, verbose_name='Получатель')
@@ -79,7 +79,7 @@ class MailingLogs(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Клиент')
 
     last_try = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время отправки')
-    status = models.CharField(choices=status_list, default='success', verbose_name='Статус попытки')
+    status = models.CharField(max_length=20, choices=status_list, default='success', verbose_name='Статус попытки')
     server_response = models.TextField(verbose_name='Ответ почтового сервера', **NULLABLE)
 
     def __str__(self):
