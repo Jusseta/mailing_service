@@ -45,7 +45,7 @@ class RegisterView(CreateView):
 
 class ProfileUpdateView(UpdateView):
     model = User
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('mailing:home')
     form_class = UserForm
 
     def get_object(self, queryset=None):
